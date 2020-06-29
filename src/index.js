@@ -7,9 +7,14 @@ module.exports = ({ types: t }) => ({
       exit: (path) => {
         const elementName = path.node.openingElement.name.name;
         const props = path.node.openingElement.attributes.map((attribute) => {
-          const key = t.identifier(attribute.name.name);
-          const value = attribute.value.expression;
-          return t.objectProperty(key, value);
+          if ( attribute.type === "JSXSpreadAttribute") {
+            return t.SpreadElement(attribute.argument);
+          }
+          else {
+            const key = t.identifier(attribute.name.name);
+            const value = attribute.value.expression;
+            return t.objectProperty(key, value);
+          }
         });
 
         const children = path.node.children.filter(
